@@ -1,9 +1,12 @@
 /**
  *
  *  MCP4802 voltage scaling:
- *      v_out = (2.048v * D) / 2^n * G
- *          Dn = input code
- *          G = Gain selection: !GA(0) -> 2x, !GA(1) -> 1x
+ *      v_out = 2.048 * G * (D / 2^n)
+ *      where:
+ *          2.048 = internal voltage ref.
+ *          G = gain selection {1,2}
+ *          D = value [0,255]
+ *          n = DAC resolution (8)
  *
  *  MCP4802 write instruction:
  *       bit 15 ..                              .. bit 8
