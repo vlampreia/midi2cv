@@ -1,0 +1,86 @@
+Another MIDI to CV project!
+================================================================================
+
+This project arose out of the desire to control antiquated drum machines which
+respond to analogue pulses with MIDI enabled devices. MIDI to CV solutions exist
+in abundance, nonetheless I saw this as an opportunity to involve myself in more
+embedded software development and as an introduction to hardware development.
+
+This project does not consider modular synthesiser CV in any way whatsoever. The
+end devices this converter is targeted to drive respond to simple voltage-level
+triggers, and so it lacks output voltage scaling and MIDI processing for
+anything other than channel, note, and velocity parameters at this time.
+
+
+SYSTEM OVERVIEW AND REQUIREMENTS
+--------------------------------------------------------------------------------
+
+At a top level, the system processes MIDI and outputs up to 8 analogue pulses
+simultaneously. It must be capable of mapping channel, note, and velocity data
+from MIDI packets to their respective analogue values and CV DACs as programmed
+by the user, in real time and with imperceptible jitter.
+
+MIDI channel and note to CV channel mappings are user configurable using the
+front panel, which provides a 3 character display and a set of momentary
+switches. User settings are stored in the MCU flash memory and persist after a
+loss of power.
+
+
+INTERFACE
+--------------------------------------------------------------------------------
+
+The system is abstracted into programmable CV channels. Each CV channel has a
+MIDI channel and note assigned to it. Channels may also be configured to respond
+to all MIDI channels and or all note values.
+
+The user interface consists of a display showing the current mode and value, and
+three buttons, one to cycle mode (CV channel, MIDI channel, and MIDI note, in
+that order), and two to increment and decrement the value. The omni value can be
+selected by holding down both value buttons.
+
+
+FIRMWARE
+--------------------------------------------------------------------------------
+
+The MCU firmware is written in C and is listed under ./firmware.
+
+This is currently a work in progress.
+
+A makefile is present to facilitate building and flashing the firmware. It
+targets the ATMega328P-PU using a USBASP programmer.
+
+
+HARDWARE
+--------------------------------------------------------------------------------
+
+The hardware platform is designed using KiCAD and is listed under ./hardware.
+
+This is currently a work in progress. A full BOM will be rendered once the
+hardware has been finalised.
+
+The platform consists of two boards interconnected via standard pin headers:
+- The main board hosting the MCU, power and MIDI input stages, as well as the CV
+  output stage.
+- The HUI board hosting the display and navigation buttons.
+
+The MCU is an ATMega328, selected for it's simplicity and active community base,
+it is a fairly capable package boasting a 20MHz clock, 2KB RAM, USART and a SPI.
+The 328 lacks any digital to analogue conversion, for this the 8bit MCP4802 was
+selected. Each IC packages 2 DACs, addressable via SPI by the MCU.
+
+The MIDI input stage follows the standards set out by the MIDI spec. A H11L1 was
+selected for the optoisolator, which is identical to the PC900 suggested in the
+spec.
+
+Control voltage outputs are buffered internally by the DACs. Output voltage can
+vary from 0v to about 4v on max gain.
+
+Supply input is regulated and can scale from 8v to 35v.
+
+
+KNOWN LIMITATIONS AND FUTURE IMPROVEMENTS
+--------------------------------------------------------------------------------
+
+- The output voltage scale is an unknown and can change from target device to
+  device. The hardware currently lacks support for programmable output voltage
+  scaling.
