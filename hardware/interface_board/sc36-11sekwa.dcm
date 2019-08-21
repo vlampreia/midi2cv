@@ -1,0 +1,27 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP SBC18-11EGWA
+D Single digit 7 segment hyper red and green LED display, common cathode
+K display LED 7-segment
+F http://www.kingbrightusa.com/images/catalog/SPEC/SBC18-11EGWA.pdf
+$ENDCMP
+#
+$CMP SBC18-11EGWA_copy
+D Single digit 7 segment hyper red and green LED display, common cathode
+K display LED 7-segment
+F http://www.kingbrightusa.com/images/catalog/SPEC/SBC18-11EGWA.pdf
+$ENDCMP
+#
+$CMP SBC18-11SURKCGKWA
+D Single digit 7 segment hyper red and green LED display, common cathode
+K display LED 7-segment
+F http://www.kingbright.com/attachments/file/psearch/000/00/00/SBC18-11SURKCGKWA(Ver.6A).pdf
+$ENDCMP
+#
+$CMP SC36-11SEKWA
+D Single digit 7 segment hyper red and green LED display, common cathode
+K display LED 7-segment
+F http://www.kingbright.com/attachments/file/psearch/000/00/00/SBC18-11SURKCGKWA(Ver.6A).pdf
+$ENDCMP
+#
+#End Doc Library

@@ -1,0 +1,770 @@
+EESchema Schematic File Version 4
+LIBS:interface_board-cache
+EELAYER 29 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Wire Wire Line
+	6800 4800 6950 4800
+Wire Wire Line
+	6800 4900 6950 4900
+Wire Wire Line
+	6950 4800 6950 4900
+Connection ~ 6950 4900
+Wire Wire Line
+	6950 4900 6950 5350
+Wire Wire Line
+	6950 5350 6850 5350
+$Comp
+L Transistor_BJT:BC548 Q1
+U 1 1 5D3EA645
+P 6750 5550
+F 0 "Q1" H 6941 5596 50  0000 L CNN
+F 1 "BC548" H 6941 5505 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 6950 5475 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/BC/BC547.pdf" H 6750 5550 50  0001 L CNN
+	1    6750 5550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6850 5750 6850 5950
+Wire Wire Line
+	6550 5550 6100 5550
+$Comp
+L power:GND #PWR0101
+U 1 1 5D3EA64D
+P 6850 5950
+AR Path="/5D3EA64D" Ref="#PWR0101"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA64D" Ref="#PWR?"  Part="1" 
+F 0 "#PWR0101" H 6850 5700 50  0001 C CNN
+F 1 "GND" H 6855 5777 50  0000 C CNN
+F 2 "" H 6850 5950 50  0001 C CNN
+F 3 "" H 6850 5950 50  0001 C CNN
+	1    6850 5950
+	1    0    0    -1  
+$EndComp
+Text Label 6100 5550 0    50   ~ 0
+DISP_1_CS
+$Comp
+L 74xx:74HC595 U1
+U 1 1 5D3EA654
+P 3650 3350
+AR Path="/5D3EA654" Ref="U1"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA654" Ref="U?"  Part="1" 
+F 0 "U1" H 3650 4131 50  0000 C CNN
+F 1 "74HC595" H 3650 4040 50  0000 C CNN
+F 2 "Package_DIP:DIP-16_W7.62mm_Socket" H 3650 3350 50  0001 C CNN
+F 3 "http://www.ti.com/lit/ds/symlink/sn74hc595.pdf" H 3650 3350 50  0001 C CNN
+	1    3650 3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L interface_board-rescue:SC36-11SEKWA-sc36-11sekwa U2
+U 1 1 5D3EA65A
+P 6500 4500
+AR Path="/5D3EA65A" Ref="U2"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA65A" Ref="U?"  Part="1" 
+F 0 "U2" H 6500 5167 50  0000 C CNN
+F 1 "SC36-11SEKWA" H 6500 5076 50  0000 C CNN
+F 2 "Display_7Segment:HDSP-7401" H 5770 3790 50  0001 L CNN
+F 3 "http://www.kingbright.com/attachments/file/psearch/000/00/00/SBC18-11SURKCGKWA(Ver.6A).pdf" H 6500 4690 50  0001 L CNN
+	1    6500 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small_US R8
+U 1 1 5D3EA660
+P 4500 3650
+AR Path="/5D3EA660" Ref="R8"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA660" Ref="R?"  Part="1" 
+F 0 "R8" V 4295 3650 50  0001 C CNN
+F 1 "R_Small_US" V 4386 3650 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" H 4500 3650 50  0001 C CNN
+F 3 "~" H 4500 3650 50  0001 C CNN
+	1    4500 3650
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R7
+U 1 1 5D3EA666
+P 4500 3550
+AR Path="/5D3EA666" Ref="R7"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA666" Ref="R?"  Part="1" 
+F 0 "R7" V 4295 3550 50  0001 C CNN
+F 1 "R_Small_US" V 4386 3550 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" H 4500 3550 50  0001 C CNN
+F 3 "~" H 4500 3550 50  0001 C CNN
+	1    4500 3550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R6
+U 1 1 5D3EA66C
+P 4500 3450
+AR Path="/5D3EA66C" Ref="R6"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA66C" Ref="R?"  Part="1" 
+F 0 "R6" V 4295 3450 50  0001 C CNN
+F 1 "R_Small_US" V 4386 3450 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" H 4500 3450 50  0001 C CNN
+F 3 "~" H 4500 3450 50  0001 C CNN
+	1    4500 3450
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R5
+U 1 1 5D3EA672
+P 4500 3350
+AR Path="/5D3EA672" Ref="R5"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA672" Ref="R?"  Part="1" 
+F 0 "R5" V 4295 3350 50  0001 C CNN
+F 1 "R_Small_US" V 4386 3350 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" H 4500 3350 50  0001 C CNN
+F 3 "~" H 4500 3350 50  0001 C CNN
+	1    4500 3350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R4
+U 1 1 5D3EA678
+P 4500 3250
+AR Path="/5D3EA678" Ref="R4"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA678" Ref="R?"  Part="1" 
+F 0 "R4" V 4295 3250 50  0001 C CNN
+F 1 "R_Small_US" V 4386 3250 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" H 4500 3250 50  0001 C CNN
+F 3 "~" H 4500 3250 50  0001 C CNN
+	1    4500 3250
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R3
+U 1 1 5D3EA67E
+P 4500 3150
+AR Path="/5D3EA67E" Ref="R3"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA67E" Ref="R?"  Part="1" 
+F 0 "R3" V 4295 3150 50  0001 C CNN
+F 1 "R_Small_US" V 4386 3150 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" H 4500 3150 50  0001 C CNN
+F 3 "~" H 4500 3150 50  0001 C CNN
+	1    4500 3150
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R2
+U 1 1 5D3EA684
+P 4500 3050
+AR Path="/5D3EA684" Ref="R2"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA684" Ref="R?"  Part="1" 
+F 0 "R2" V 4295 3050 50  0001 C CNN
+F 1 "R_Small_US" V 4386 3050 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" H 4500 3050 50  0001 C CNN
+F 3 "~" H 4500 3050 50  0001 C CNN
+	1    4500 3050
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Small_US R1
+U 1 1 5D3EA68A
+P 4500 2950
+AR Path="/5D3EA68A" Ref="R1"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA68A" Ref="R?"  Part="1" 
+F 0 "R1" V 4295 2950 50  0001 C CNN
+F 1 "R_Small_US" V 4386 2950 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal" H 4500 2950 50  0001 C CNN
+F 3 "~" H 4500 2950 50  0001 C CNN
+	1    4500 2950
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4050 2950 4400 2950
+Wire Wire Line
+	4050 3050 4400 3050
+Wire Wire Line
+	4400 3150 4050 3150
+Wire Wire Line
+	4050 3250 4400 3250
+Wire Wire Line
+	4400 3350 4050 3350
+Wire Wire Line
+	4050 3450 4400 3450
+Wire Wire Line
+	4400 3550 4050 3550
+Wire Wire Line
+	4050 3650 4400 3650
+Wire Wire Line
+	4600 2950 6100 2950
+Wire Wire Line
+	6100 2950 6100 4200
+Wire Wire Line
+	6100 4200 6200 4200
+Wire Wire Line
+	4600 3050 6000 3050
+Wire Wire Line
+	6000 3050 6000 4300
+Wire Wire Line
+	6000 4300 6200 4300
+Wire Wire Line
+	4600 3150 5900 3150
+Wire Wire Line
+	5900 3150 5900 4400
+Wire Wire Line
+	5900 4400 6200 4400
+Wire Wire Line
+	4600 3250 5800 3250
+Wire Wire Line
+	5800 3250 5800 4500
+Wire Wire Line
+	5800 4500 6200 4500
+Wire Wire Line
+	4600 3350 5700 3350
+Wire Wire Line
+	5700 3350 5700 4600
+Wire Wire Line
+	5700 4600 6200 4600
+Wire Wire Line
+	4600 3450 5600 3450
+Wire Wire Line
+	5600 3450 5600 4700
+Wire Wire Line
+	5600 4700 6200 4700
+Wire Wire Line
+	4600 3550 5500 3550
+Wire Wire Line
+	5500 3550 5500 4800
+Wire Wire Line
+	5500 4800 6200 4800
+Wire Wire Line
+	6200 4900 5400 4900
+Wire Wire Line
+	5400 4900 5400 3650
+Wire Wire Line
+	5400 3650 4600 3650
+Wire Wire Line
+	8600 4800 8750 4800
+Wire Wire Line
+	8600 4900 8750 4900
+Wire Wire Line
+	8750 4800 8750 4900
+Connection ~ 8750 4900
+Wire Wire Line
+	8750 4900 8750 5350
+Wire Wire Line
+	8750 5350 8650 5350
+$Comp
+L Transistor_BJT:BC548 Q2
+U 1 1 5D3EA6B6
+P 8550 5550
+F 0 "Q2" H 8741 5596 50  0000 L CNN
+F 1 "BC548" H 8741 5505 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 8750 5475 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/BC/BC547.pdf" H 8550 5550 50  0001 L CNN
+	1    8550 5550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8650 5750 8650 5950
+Wire Wire Line
+	8350 5550 7900 5550
+$Comp
+L power:GND #PWR0102
+U 1 1 5D3EA6BE
+P 8650 5950
+AR Path="/5D3EA6BE" Ref="#PWR0102"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA6BE" Ref="#PWR?"  Part="1" 
+F 0 "#PWR0102" H 8650 5700 50  0001 C CNN
+F 1 "GND" H 8655 5777 50  0000 C CNN
+F 2 "" H 8650 5950 50  0001 C CNN
+F 3 "" H 8650 5950 50  0001 C CNN
+	1    8650 5950
+	1    0    0    -1  
+$EndComp
+Text Label 7900 5550 0    50   ~ 0
+DISP_2_CS
+$Comp
+L interface_board-rescue:SC36-11SEKWA-sc36-11sekwa U3
+U 1 1 5D3EA6C5
+P 8300 4500
+AR Path="/5D3EA6C5" Ref="U3"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA6C5" Ref="U?"  Part="1" 
+F 0 "U3" H 8300 5167 50  0000 C CNN
+F 1 "SC36-11SEKWA" H 8300 5076 50  0000 C CNN
+F 2 "Display_7Segment:HDSP-7401" H 7570 3790 50  0001 L CNN
+F 3 "http://www.kingbright.com/attachments/file/psearch/000/00/00/SBC18-11SURKCGKWA(Ver.6A).pdf" H 8300 4690 50  0001 L CNN
+	1    8300 4500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6100 2950 7900 2950
+Wire Wire Line
+	7900 2950 7900 4200
+Wire Wire Line
+	7900 4200 8000 4200
+Connection ~ 6100 2950
+Wire Wire Line
+	6000 3050 7800 3050
+Wire Wire Line
+	7800 3050 7800 4300
+Wire Wire Line
+	7800 4300 8000 4300
+Connection ~ 6000 3050
+Wire Wire Line
+	5900 3150 7700 3150
+Wire Wire Line
+	7700 3150 7700 4400
+Wire Wire Line
+	7700 4400 8000 4400
+Connection ~ 5900 3150
+Wire Wire Line
+	5800 3250 7600 3250
+Wire Wire Line
+	7600 3250 7600 4500
+Wire Wire Line
+	7600 4500 8000 4500
+Connection ~ 5800 3250
+Wire Wire Line
+	5700 3350 7500 3350
+Wire Wire Line
+	7500 3350 7500 4600
+Wire Wire Line
+	7500 4600 8000 4600
+Connection ~ 5700 3350
+Wire Wire Line
+	5600 3450 7400 3450
+Wire Wire Line
+	7400 3450 7400 4700
+Wire Wire Line
+	7400 4700 8000 4700
+Connection ~ 5600 3450
+Wire Wire Line
+	8000 4800 7300 4800
+Wire Wire Line
+	7300 4800 7300 3550
+Wire Wire Line
+	7300 3550 5500 3550
+Connection ~ 5500 3550
+Wire Wire Line
+	8000 4900 7200 4900
+Wire Wire Line
+	7200 3650 5400 3650
+Connection ~ 5400 3650
+Wire Wire Line
+	10400 4800 10550 4800
+Wire Wire Line
+	10400 4900 10550 4900
+Wire Wire Line
+	10550 4800 10550 4900
+Connection ~ 10550 4900
+Wire Wire Line
+	10550 4900 10550 5350
+Wire Wire Line
+	10550 5350 10450 5350
+$Comp
+L Transistor_BJT:BC548 Q3
+U 1 1 5D3EA6F0
+P 10350 5550
+F 0 "Q3" H 10541 5596 50  0000 L CNN
+F 1 "BC548" H 10541 5505 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 10550 5475 50  0001 L CIN
+F 3 "http://www.fairchildsemi.com/ds/BC/BC547.pdf" H 10350 5550 50  0001 L CNN
+	1    10350 5550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10450 5750 10450 5950
+Wire Wire Line
+	10150 5550 9700 5550
+$Comp
+L power:GND #PWR0103
+U 1 1 5D3EA6F8
+P 10450 5950
+AR Path="/5D3EA6F8" Ref="#PWR0103"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA6F8" Ref="#PWR?"  Part="1" 
+F 0 "#PWR0103" H 10450 5700 50  0001 C CNN
+F 1 "GND" H 10455 5777 50  0000 C CNN
+F 2 "" H 10450 5950 50  0001 C CNN
+F 3 "" H 10450 5950 50  0001 C CNN
+	1    10450 5950
+	1    0    0    -1  
+$EndComp
+Text Label 9700 5550 0    50   ~ 0
+DISP_3_CS
+$Comp
+L interface_board-rescue:SC36-11SEKWA-sc36-11sekwa U4
+U 1 1 5D3EA6FF
+P 10100 4500
+AR Path="/5D3EA6FF" Ref="U4"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA6FF" Ref="U?"  Part="1" 
+F 0 "U4" H 10100 5167 50  0000 C CNN
+F 1 "SC36-11SEKWA" H 10100 5076 50  0000 C CNN
+F 2 "Display_7Segment:HDSP-7401" H 9370 3790 50  0001 L CNN
+F 3 "http://www.kingbright.com/attachments/file/psearch/000/00/00/SBC18-11SURKCGKWA(Ver.6A).pdf" H 10100 4690 50  0001 L CNN
+	1    10100 4500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9700 2950 9700 4200
+Wire Wire Line
+	9700 4200 9800 4200
+Wire Wire Line
+	9600 3050 9600 4300
+Wire Wire Line
+	9600 4300 9800 4300
+Wire Wire Line
+	9500 3150 9500 4400
+Wire Wire Line
+	9500 4400 9800 4400
+Wire Wire Line
+	9400 3250 9400 4500
+Wire Wire Line
+	9400 4500 9800 4500
+Wire Wire Line
+	9300 3350 9300 4600
+Wire Wire Line
+	9300 4600 9800 4600
+Wire Wire Line
+	9200 3450 9200 4700
+Wire Wire Line
+	9200 4700 9800 4700
+Wire Wire Line
+	9800 4800 9100 4800
+Wire Wire Line
+	9100 4800 9100 3550
+Wire Wire Line
+	9800 4900 9000 4900
+Wire Wire Line
+	9000 4900 9000 3650
+Wire Wire Line
+	7200 4900 7200 3650
+Wire Wire Line
+	7200 3650 9000 3650
+Connection ~ 7200 3650
+Wire Wire Line
+	7300 3550 9100 3550
+Connection ~ 7300 3550
+Wire Wire Line
+	7400 3450 9200 3450
+Connection ~ 7400 3450
+Wire Wire Line
+	7500 3350 9300 3350
+Connection ~ 7500 3350
+Wire Wire Line
+	7600 3250 9400 3250
+Connection ~ 7600 3250
+Wire Wire Line
+	7700 3150 9500 3150
+Connection ~ 7700 3150
+Wire Wire Line
+	7800 3050 9600 3050
+Connection ~ 7800 3050
+Wire Wire Line
+	7900 2950 9700 2950
+Connection ~ 7900 2950
+$Comp
+L Device:C_Small C2
+U 1 1 5D3EA726
+P 3800 2300
+F 0 "C2" H 3892 2346 50  0000 L CNN
+F 1 "0.1uF" H 3892 2255 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D3.8mm_W2.6mm_P2.50mm" H 3800 2300 50  0001 C CNN
+F 3 "~" H 3800 2300 50  0001 C CNN
+	1    3800 2300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0104
+U 1 1 5D3EA72C
+P 3500 2400
+F 0 "#PWR0104" H 3500 2150 50  0001 C CNN
+F 1 "GND" H 3505 2227 50  0000 C CNN
+F 2 "" H 3500 2400 50  0001 C CNN
+F 3 "" H 3500 2400 50  0001 C CNN
+	1    3500 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0105
+U 1 1 5D3EA732
+P 3800 2400
+F 0 "#PWR0105" H 3800 2150 50  0001 C CNN
+F 1 "GND" H 3805 2227 50  0000 C CNN
+F 2 "" H 3800 2400 50  0001 C CNN
+F 3 "" H 3800 2400 50  0001 C CNN
+	1    3800 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:CP1_Small C1
+U 1 1 5D3EA73E
+P 3500 2300
+F 0 "C1" H 3409 2346 50  0000 R CNN
+F 1 "10uF" H 3409 2255 50  0000 R CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm" H 3500 2300 50  0001 C CNN
+F 3 "~" H 3500 2300 50  0001 C CNN
+	1    3500 2300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3500 2200 3500 2150
+Wire Wire Line
+	3500 2150 3650 2150
+Wire Wire Line
+	3800 2150 3800 2200
+Wire Wire Line
+	3650 2150 3650 2100
+Connection ~ 3650 2150
+Wire Wire Line
+	3650 2150 3800 2150
+Wire Wire Line
+	3650 2150 3650 2750
+$Comp
+L power:GND #PWR0106
+U 1 1 5D3EA74B
+P 3650 4050
+AR Path="/5D3EA74B" Ref="#PWR0106"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA74B" Ref="#PWR?"  Part="1" 
+F 0 "#PWR0106" H 3650 3800 50  0001 C CNN
+F 1 "GND" H 3655 3877 50  0000 C CNN
+F 2 "" H 3650 4050 50  0001 C CNN
+F 3 "" H 3650 4050 50  0001 C CNN
+	1    3650 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 3150 3000 3150
+Text Label 3000 3150 0    50   ~ 0
+SCLK
+Wire Wire Line
+	3250 2950 3000 2950
+Text Label 3000 2950 0    50   ~ 0
+SI
+Wire Wire Line
+	3250 3450 3000 3450
+Text Label 3000 3450 0    50   ~ 0
+LATCH
+$Comp
+L power:GND #PWR0107
+U 1 1 5D3EA757
+P 2850 3650
+AR Path="/5D3EA757" Ref="#PWR0107"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA757" Ref="#PWR?"  Part="1" 
+F 0 "#PWR0107" H 2850 3400 50  0001 C CNN
+F 1 "GND" H 2855 3477 50  0000 C CNN
+F 2 "" H 2850 3650 50  0001 C CNN
+F 3 "" H 2850 3650 50  0001 C CNN
+	1    2850 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2850 3650 2850 3550
+Wire Wire Line
+	2850 3550 3250 3550
+Wire Wire Line
+	2850 3250 3250 3250
+Wire Wire Line
+	2850 3150 2850 3250
+$Comp
+L power:+5V #PWR0108
+U 1 1 5D3EA761
+P 2850 3150
+AR Path="/5D3EA761" Ref="#PWR0108"  Part="1" 
+AR Path="/5D3BE5F7/5D3EA761" Ref="#PWR?"  Part="1" 
+F 0 "#PWR0108" H 2850 3000 50  0001 C CNN
+F 1 "+5V" H 2865 3323 50  0000 C CNN
+F 2 "" H 2850 3150 50  0001 C CNN
+F 3 "" H 2850 3150 50  0001 C CNN
+	1    2850 3150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1550 1450 1350 1450
+Wire Wire Line
+	1550 1350 1350 1350
+Wire Wire Line
+	1550 1250 1350 1250
+Wire Wire Line
+	2050 1250 2250 1250
+Wire Wire Line
+	2050 1350 2250 1350
+Wire Wire Line
+	2050 1450 2250 1450
+Text Label 1350 1450 2    50   ~ 0
+SI
+Text Label 1350 1350 2    50   ~ 0
+SCLK
+Text Label 1350 1250 2    50   ~ 0
+LATCH
+Text Label 2250 1250 0    50   ~ 0
+DISP_1_CS
+Text Label 2250 1350 0    50   ~ 0
+DISP_2_CS
+Text Label 2250 1450 0    50   ~ 0
+DISP_3_CS
+$Comp
+L power:+5V #PWR0109
+U 1 1 5D762A01
+P 3650 2100
+AR Path="/5D762A01" Ref="#PWR0109"  Part="1" 
+AR Path="/5D3BE5F7/5D762A01" Ref="#PWR?"  Part="1" 
+F 0 "#PWR0109" H 3650 1950 50  0001 C CNN
+F 1 "+5V" H 3665 2273 50  0000 C CNN
+F 2 "" H 3650 2100 50  0001 C CNN
+F 3 "" H 3650 2100 50  0001 C CNN
+	1    3650 2100
+	-1   0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR0110
+U 1 1 5DB129F7
+P 900 1000
+AR Path="/5DB129F7" Ref="#PWR0110"  Part="1" 
+AR Path="/5D3BE5F7/5DB129F7" Ref="#PWR?"  Part="1" 
+F 0 "#PWR0110" H 900 850 50  0001 C CNN
+F 1 "+5V" H 915 1173 50  0000 C CNN
+F 2 "" H 900 1000 50  0001 C CNN
+F 3 "" H 900 1000 50  0001 C CNN
+	1    900  1000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1550 1150 900  1150
+Wire Wire Line
+	900  1150 900  1000
+$Comp
+L power:GND #PWR0111
+U 1 1 5DB1CFE5
+P 2900 1300
+F 0 "#PWR0111" H 2900 1050 50  0001 C CNN
+F 1 "GND" H 2905 1127 50  0000 C CNN
+F 2 "" H 2900 1300 50  0001 C CNN
+F 3 "" H 2900 1300 50  0001 C CNN
+	1    2900 1300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2050 1150 2900 1150
+Wire Wire Line
+	2900 1150 2900 1300
+Wire Wire Line
+	1100 2600 1300 2600
+Wire Wire Line
+	1100 3000 1300 3000
+Wire Wire Line
+	1100 3400 1300 3400
+$Comp
+L Switch:SW_SPST SW1
+U 1 1 5D66E766
+P 1500 2600
+F 0 "SW1" H 1500 2835 50  0000 C CNN
+F 1 "SW_SPST" H 1500 2744 50  0000 C CNN
+F 2 "test:B3W-4050" H 1500 2600 50  0001 C CNN
+F 3 "~" H 1500 2600 50  0001 C CNN
+	1    1500 2600
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0112
+U 1 1 5D66F344
+P 1800 2700
+F 0 "#PWR0112" H 1800 2450 50  0001 C CNN
+F 1 "GND" H 1805 2527 50  0000 C CNN
+F 2 "" H 1800 2700 50  0001 C CNN
+F 3 "" H 1800 2700 50  0001 C CNN
+	1    1800 2700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1700 2600 1800 2600
+Wire Wire Line
+	1800 2600 1800 2700
+$Comp
+L Switch:SW_SPST SW2
+U 1 1 5D67BB75
+P 1500 3000
+F 0 "SW2" H 1500 3235 50  0000 C CNN
+F 1 "SW_SPST" H 1500 3144 50  0000 C CNN
+F 2 "test:B3W-4050" H 1500 3000 50  0001 C CNN
+F 3 "~" H 1500 3000 50  0001 C CNN
+	1    1500 3000
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0113
+U 1 1 5D67BB7B
+P 1800 3100
+F 0 "#PWR0113" H 1800 2850 50  0001 C CNN
+F 1 "GND" H 1805 2927 50  0000 C CNN
+F 2 "" H 1800 3100 50  0001 C CNN
+F 3 "" H 1800 3100 50  0001 C CNN
+	1    1800 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1700 3000 1800 3000
+Wire Wire Line
+	1800 3000 1800 3100
+$Comp
+L Switch:SW_SPST SW3
+U 1 1 5D681BEB
+P 1500 3400
+F 0 "SW3" H 1500 3635 50  0000 C CNN
+F 1 "SW_SPST" H 1500 3544 50  0000 C CNN
+F 2 "test:B3W-4050" H 1500 3400 50  0001 C CNN
+F 3 "~" H 1500 3400 50  0001 C CNN
+	1    1500 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0114
+U 1 1 5D681BF1
+P 1800 3500
+F 0 "#PWR0114" H 1800 3250 50  0001 C CNN
+F 1 "GND" H 1805 3327 50  0000 C CNN
+F 2 "" H 1800 3500 50  0001 C CNN
+F 3 "" H 1800 3500 50  0001 C CNN
+	1    1800 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1700 3400 1800 3400
+Wire Wire Line
+	1800 3400 1800 3500
+$Comp
+L Connector_Generic:Conn_02x06_Odd_Even J1
+U 1 1 5D44D58C
+P 1750 1350
+F 0 "J1" H 1800 1767 50  0000 C CNN
+F 1 "Conn_02x06_Odd_Even" H 1800 1676 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_2x06_P2.54mm_Vertical" H 1750 1350 50  0001 C CNN
+F 3 "~" H 1750 1350 50  0001 C CNN
+	1    1750 1350
+	1    0    0    -1  
+$EndComp
+Text Label 1100 2600 2    50   ~ 0
+BTN_1
+Text Label 1100 3000 2    50   ~ 0
+BTN_2
+Text Label 1100 3400 2    50   ~ 0
+BTN_3
+Wire Wire Line
+	1350 1550 1550 1550
+Wire Wire Line
+	2250 1550 2050 1550
+Wire Wire Line
+	1350 1650 1550 1650
+Text Label 1350 1550 2    50   ~ 0
+BTN_1
+Text Label 2250 1550 0    50   ~ 0
+BTN_2
+Text Label 1350 1650 2    50   ~ 0
+BTN_3
+$EndSCHEMATC

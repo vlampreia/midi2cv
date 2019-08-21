@@ -1,0 +1,5 @@
+#define BIT_CLEAR_AND_SET(var, bit, n) (var = (var & ~(1 << (n))) | ((bit) << (n)))
+#define BIT_SET(var, n) (var = var | (1 << (n)))
+#define BIT_CLEAR(var, n) (var = var & ~(1 << (n)))
+#define BIT_CHECK(var, n) ((var >> n) & 1)
+#define BIT_FLIP(var, n) (var = var ^ (1 << (n)))

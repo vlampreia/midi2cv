@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name sc36-11sekwa)(type Legacy)(uri ${KIPRJMOD}/sc36-11sekwa.lib)(options "")(descr ""))
+)
