@@ -13,6 +13,7 @@
 #include "cvchan.h"
 #include "midi.h"
 #include "segdisp.h"
+#include "btn.h"
 #include "helpers.h"
 
 #define BUFFER_SIZE 32
@@ -21,9 +22,10 @@
 #define DAC_LDAC_PORT PORTC
 #define DAC_LDAC_PIN PINC3
 
-
 #define CHANNEL_COUNT 8
 #define DAC_COUNT (CHANNEL_COUNT > 1 ? CHANNEL_COUNT / 2 : 1) //mcp4802 holds two dacs each
+
+#define BUTTON_COUNT 3
 
 enum display_mode {
     disp_mode_channel,
@@ -39,6 +41,7 @@ struct cbuff    buffers[CHANNEL_COUNT];
 struct cvchan   channels[CHANNEL_COUNT];
 struct cbuff    midi_buffer = {0};
 struct segdisp  disp = {0};
+struct btn      buttons[BUTTON_COUNT];
 
 static volatile uint8_t sig_proc_ana_buff = 0;
 static volatile uint8_t update_display_trig = 0;
@@ -53,11 +56,7 @@ enum display_mode   disp_mode;
 uint8_t             disp_sent;
 uint8_t             disp_dbg = 0;
 
-uint8_t btn_1_high = 0;
-uint8_t btn_2_high = 0;
-uint8_t btn_3_high = 0;
-
-/* non-volatile */
+/* non-volatile memory */
 struct nv_channel {
     uint8_t midi_channel;
     uint8_t note;
@@ -80,6 +79,8 @@ static void store_settings (void);
 static void load_settings (void);
 static void config_gpio (void);
 static void handle_ui_input (void);
+static void setup_buttons(void);
+static void update_inputs(void);
 
 void config_gpio (void) {
     DDRC = 0xFF;
@@ -312,18 +313,18 @@ void handle_ui_input (void) {
 
     switch (disp_mode) {
         case disp_mode_channel:
-            if (btn_1_high) {
+            if (buttons[0].high) {
                 disp_mode = disp_mode_midi;
                 break;
             }
 
-            if (btn_2_high) {
+            if (buttons[1].high) {
                 selected_ch = ((selected_ch - 1) + CHANNEL_COUNT) % CHANNEL_COUNT;
                 user_change = 1;
                 break;
             }
 
-            if (btn_3_high) {
+            if (buttons[2].high) {
                 selected_ch = (selected_ch + 1) % CHANNEL_COUNT;
                 user_change = 1;
             }
@@ -331,13 +332,13 @@ void handle_ui_input (void) {
             break;
 
         case disp_mode_midi:
-            if (btn_1_high) {
+            if (buttons[0].high) {
                 disp_mode = disp_mode_note;
                 break;
             }
 
-            if (btn_2_high) {
-                if (btn_3_high) {
+            if (buttons[1].high) {
+                if (buttons[2].high) {
                     ch->midi_channel = 255;
                     break;
                 }
@@ -347,7 +348,7 @@ void handle_ui_input (void) {
                 break;
             }
 
-            if (btn_3_high) {
+            if (buttons[2].high) {
                 ch->midi_channel = (ch->midi_channel + 1) % 16;
                 user_change = 1;
             }
@@ -355,13 +356,13 @@ void handle_ui_input (void) {
             break;
 
         case disp_mode_note:
-            if (btn_1_high) {
+            if (buttons[0].high) {
                 disp_mode = disp_mode_channel;
                 break;
             }
 
-            if (btn_2_high) {
-                if (btn_3_high) {
+            if (buttons[1].high) {
+                if (buttons[2].high) {
                     ch->note = 255;
                     break;
                 }
@@ -372,7 +373,7 @@ void handle_ui_input (void) {
                 break;
             }
 
-            if (btn_3_high) {
+            if (buttons[2].high) {
                 ch->note = (ch->note + 1) % 127;
                 user_change = 1;
             }
@@ -381,11 +382,11 @@ void handle_ui_input (void) {
 
         case disp_mode_debug:
         default:
-            if (btn_1_high) disp_mode = disp_mode_channel;
-            if (btn_2_high) {
+            if (buttons[0].high) disp_mode = disp_mode_channel;
+            if (buttons[1].high) {
                 disp_dbg--;
             }
-            if (btn_3_high) {
+            if (buttons[2].high) {
                 disp_dbg++;
             }
 
@@ -426,11 +427,26 @@ void store_settings (void) {
     eeprom_update_block(&settings, &nv_channels, sizeof(struct nv_channel) * CHANNEL_COUNT);
 }
 
+static void setup_buttons(void) {
+    btn_init(&buttons[0], &PIND, PIND5);
+    btn_init(&buttons[1], &PIND, PIND6);
+    btn_init(&buttons[2], &PIND, PIND7);
+}
+
+static void update_inputs(void) {
+    for (size_t i=0; i<BUTTON_COUNT; ++i) {
+        if (btn_update_state(&buttons[i])) {
+            process_input_trig = 100;
+        }
+    }
+}
+
 int main (void) {
     cli();
     config_gpio();
     init_channels();
     setup_buffers();
+    setup_buttons();
     init_timers();
     setup_usart();
     init_spi();
@@ -460,13 +476,6 @@ int main (void) {
     selected_ch = 0;
     disp_mode = disp_mode_debug;
     update_display();
-
-    //
-    uint8_t btn_1_state = 0;
-    uint8_t btn_2_state = 0;
-    uint8_t btn_3_state = 0;
-
-
 
     while (1) {
         sei(); // SREG:I does not always reset to 1. This should be investigated
@@ -500,37 +509,14 @@ int main (void) {
         // debounce ui input
         if (sample_input_trig >= 10) {
             sample_input_trig = 0;
-            btn_1_state = (btn_1_state << 1) | !(PIND & (1 << PIND5));
-            btn_2_state = (btn_2_state << 1) | !(PIND & (1 << PIND6));
-            btn_3_state = (btn_3_state << 1) | !(PIND & (1 << PIND7));
-
-            if (btn_1_state == 0x0F) { // leading edge
-                btn_1_high = 1;
-                process_input_trig = 100;
-            } else if (btn_1_state == 0xF0) { // falling edge
-                btn_1_high = 0;
-            }
-
-            if (btn_2_state == 0x0F) {
-                btn_2_high = 1;
-                process_input_trig = 100;
-            } else if (btn_2_state == 0xF0) {
-                btn_2_high = 0;
-            }
-
-            if (btn_3_state == 0x0F) {
-                btn_3_high = 1;
-                process_input_trig = 100;
-            } else if (btn_3_state == 0xF0) {
-                btn_3_high = 0;
-            }
+            update_inputs();
         }
 
         // process user input
         if (process_input_trig >= 100) {
             process_input_trig = 0;
 
-            if (!btn_1_high && !btn_2_high && !btn_3_high) {
+            if (!buttons[0].high && !buttons[1].high && !buttons[2].high) {
                 if (user_change && eeprom_is_ready()) {
                     store_settings();
                     user_change = 0;
