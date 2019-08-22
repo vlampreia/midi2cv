@@ -16,6 +16,8 @@
 #include "btn.h"
 #include "helpers.h"
 
+/* -------------------------------------------------------------------------- */
+
 #define BUFFER_SIZE 32
 #define MIDI_BUFFER_SIZE 64
 
@@ -26,6 +28,8 @@
 #define DAC_COUNT (CHANNEL_COUNT > 1 ? CHANNEL_COUNT / 2 : 1) //mcp4802 holds two dacs each
 
 #define BUTTON_COUNT 3
+
+/* -------------------------------------------------------------------------- */
 
 enum display_mode {
     disp_mode_channel,
@@ -48,7 +52,6 @@ static volatile uint8_t update_display_trig = 0;
 static volatile uint8_t update_midi_trig = 0;
 static volatile uint8_t sample_input_trig = 0;
 static volatile uint8_t process_input_trig  = 0;
-static volatile uint8_t display_change_flag = 0;
 
 uint8_t             user_change = 0;
 uint8_t             selected_ch;
@@ -64,10 +67,10 @@ struct nv_channel {
 static struct nv_channel EEMEM nv_channels[CHANNEL_COUNT];
 
 /* functions */
-static void send_spi (uint8_t data);
-static void send_spi_uint16_t (uint16_t data);
+static void spi_init (void);
+static void spi_send (uint8_t data);
+static void spi_send_uint16_t (uint16_t data);
 static void buffer_advance (void);
-static void init_spi (void);
 static void init_timers (void);
 static void setup_buffers (void);
 static void setup_usart (void);
@@ -81,6 +84,9 @@ static void config_gpio (void);
 static void handle_ui_input (void);
 static void setup_buttons(void);
 static void update_inputs(void);
+static void setup_display (void);
+
+/* -------------------------------------------------------------------------- */
 
 void config_gpio (void) {
     DDRC = 0xFF;
@@ -117,9 +123,33 @@ void setup_usart (void) {
     UCSR0B = (1 << RXEN0) | (1 << RXCIE0);
 }
 
-void send_spi (uint8_t data) {
+void buffer_advance (void) {
+    uint8_t latch_pins = 0;
+
+    for (int i=0; i<CHANNEL_COUNT; ++i) {
+        if (cvchan_proc_buffer(&channels[i], &spi_send_uint16_t)) continue;
+        latch_pins |= channels[i].dac->ldac_pin;
+    }
+
+    if (latch_pins) {
+        MCP4802_latch_direct(DAC_LDAC_PORT, latch_pins);
+    }
+}
+
+void spi_init (void) {
+    // MOSI, SCK output, SS master
+    PORTC |= (1 << PINB2);
+    DDRB = (1 << DDB5) | (1 << DDB3) | (1 << DDB2);
+
+    // Enable SPI, Master, clock rate fck/16
+    // default write MSB-first
+    SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0) | (1 << SPR1);
+}
+
+void spi_send (uint8_t data) {
     SPDR = data;
 
+    /* wait for spi to be free */
     while (!(SPSR & (1 << SPIF)) && (SPCR & (1 << MSTR))) {}
 
     if (!(SPCR & (1 << MSTR))) {
@@ -131,32 +161,9 @@ void send_spi (uint8_t data) {
     SPSR;
 }
 
-void send_spi_uint16_t (uint16_t data) {
-    send_spi((data >> 8));
-    send_spi(data & 0x00FF);
-}
-
-void buffer_advance (void) {
-    uint8_t latch_pins = 0;
-
-    for (int i=0; i<CHANNEL_COUNT; ++i) {
-        if (cvchan_proc_buffer(&channels[i], &send_spi_uint16_t)) continue;
-        latch_pins |= channels[i].dac->ldac_pin;
-    }
-
-    if (latch_pins) {
-        MCP4802_latch_direct(DAC_LDAC_PORT, latch_pins);
-    }
-}
-
-void init_spi (void) {
-    // MOSI, SCK output, SS master
-    PORTC |= (1 << PINB2);
-    DDRB = (1 << DDB5) | (1 << DDB3) | (1 << DDB2);
-
-    // Enable SPI, Master, clock rate fck/16
-    // default write MSB-first
-    SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0) | (1 << SPR1);
+void spi_send_uint16_t (uint16_t data) {
+    spi_send((data >> 8));
+    spi_send(data & 0x00FF);
 }
 
 void init_timers (void) {
@@ -183,6 +190,8 @@ void init_timers (void) {
 
 }
 
+/* ISR */
+
 ISR (USART_RX_vect) {
     uint8_t data = UDR0;
     if (data >= 0xF0) {
@@ -198,6 +207,8 @@ ISR (TIMER0_COMPA_vect) {
     sample_input_trig++;
     process_input_trig++;
 }
+
+/* /ISR */
 
 void setup_buffers (void) {
     static uint8_t midi_buffer_d[MIDI_BUFFER_SIZE];
@@ -215,8 +226,7 @@ void process_midi (uint8_t byte) {
     if (!event.has_d2) return;
 
     uint8_t value = 0;
-     disp_sent = 0;
-
+    disp_sent = 0;
 
     for (int i=0; i<CHANNEL_COUNT; ++i) {
         if (cvchan_proc_midi(&channels[i], &event, &value)) {
@@ -260,7 +270,6 @@ void update_display (void) {
                 text[2] =  (disp_channel % 10) + 48;
             }
 
-
             segdisp_set_value(&disp, text, 3);
             break;
         }
@@ -284,7 +293,6 @@ void update_display (void) {
                     text[2] = oct + 48 - 1;
                 }
             }
-
 
             segdisp_set_value(&disp, text, 3);
 
@@ -311,13 +319,20 @@ void update_display (void) {
 void handle_ui_input (void) {
     struct cvchan *ch = &channels[selected_ch];
 
+    static size_t disp_mode_idx = 0;
+    static enum display_mode mode_order[] = {
+        disp_mode_channel,
+        disp_mode_midi,
+        disp_mode_note,
+    };
+
+    if (buttons[0].high) {
+        disp_mode = mode_order[(disp_mode_idx++) % 3];
+        return;
+    }
+
     switch (disp_mode) {
         case disp_mode_channel:
-            if (buttons[0].high) {
-                disp_mode = disp_mode_midi;
-                break;
-            }
-
             if (buttons[1].high) {
                 selected_ch = ((selected_ch - 1) + CHANNEL_COUNT) % CHANNEL_COUNT;
                 user_change = 1;
@@ -332,11 +347,6 @@ void handle_ui_input (void) {
             break;
 
         case disp_mode_midi:
-            if (buttons[0].high) {
-                disp_mode = disp_mode_note;
-                break;
-            }
-
             if (buttons[1].high) {
                 if (buttons[2].high) {
                     ch->midi_channel = 255;
@@ -356,11 +366,6 @@ void handle_ui_input (void) {
             break;
 
         case disp_mode_note:
-            if (buttons[0].high) {
-                disp_mode = disp_mode_channel;
-                break;
-            }
-
             if (buttons[1].high) {
                 if (buttons[2].high) {
                     ch->note = 255;
@@ -394,6 +399,7 @@ void handle_ui_input (void) {
     }
 }
 
+//TODO: reenable wdt for eeprom write protection
 uint8_t mcusr_mirror __attribute__ ((section (".noinit")));
 
 void get_mcusr (void) \
@@ -404,7 +410,6 @@ void get_mcusr (void) {
     MCUSR = 0;
     wdt_disable();
 }
-
 
 void load_settings (void) {
     struct nv_channel settings[CHANNEL_COUNT];
@@ -441,28 +446,10 @@ static void update_inputs(void) {
     }
 }
 
-int main (void) {
-    cli();
-    config_gpio();
-    init_channels();
-    setup_buffers();
-    setup_buttons();
-    init_timers();
-    setup_usart();
-    init_spi();
-    sei();
-
-    // shutdown dacs until first used
-    for (size_t i=0; i<DAC_COUNT; ++i) {
-        MCP4802_disable_dac_spi(&dacs[i], 0, &send_spi_uint16_t);
-        MCP4802_disable_dac_spi(&dacs[i], 1, &send_spi_uint16_t);
-    }
-
-    load_settings();
-
-    // configure display
-    uint8_t pins[] = { PIND2, PIND3, PIND4 };
-    uint8_t values[3];
+static void setup_display (void) {
+    // TODO: refactor to module init func
+    static uint8_t pins[] = { PIND2, PIND3, PIND4 };
+    static uint8_t values[3];
 
     disp.displays = 3;
     disp.select_pins = pins;
@@ -471,6 +458,29 @@ int main (void) {
     disp.select_port = &PORTD;
     disp.latch_port = &PORTC;
     disp.latch_pin=PINC5;
+}
+
+/* -------------------------------------------------------------------------- */
+
+int main (void) {
+    cli();
+    config_gpio();
+    init_channels();
+    setup_buffers();
+    setup_buttons();
+    init_timers();
+    setup_usart();
+    spi_init();
+    sei();
+
+    // shutdown dacs until first used
+    for (size_t i=0; i<DAC_COUNT; ++i) {
+        MCP4802_disable_dac_spi(&dacs[i], 0, &spi_send_uint16_t);
+        MCP4802_disable_dac_spi(&dacs[i], 1, &spi_send_uint16_t);
+    }
+
+    load_settings();
+    setup_display();
 
     // initialise ui
     selected_ch = 0;
@@ -501,14 +511,14 @@ int main (void) {
         // refresh display
         if (update_display_trig >= 1) {
             update_display_trig = 0;
-            display_change_flag = 0;
 
-            segdisp_advance(&disp, &send_spi);
+            segdisp_advance(&disp, &spi_send);
         }
 
         // debounce ui input
         if (sample_input_trig >= 10) {
             sample_input_trig = 0;
+
             update_inputs();
         }
 
@@ -517,6 +527,7 @@ int main (void) {
             process_input_trig = 0;
 
             if (!buttons[0].high && !buttons[1].high && !buttons[2].high) {
+                /* no change */
                 if (user_change && eeprom_is_ready()) {
                     store_settings();
                     user_change = 0;
