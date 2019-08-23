@@ -14,6 +14,11 @@
 #include "midi.h"
 #include "segdisp.h"
 #include "btn.h"
+#include "view.h"
+#include "view_data.h"
+#include "view_channel.h"
+#include "view_midi_channel.h"
+#include "view_midi_note.h"
 #include "helpers.h"
 
 /* -------------------------------------------------------------------------- */
@@ -53,8 +58,10 @@ static volatile uint8_t update_midi_trig = 0;
 static volatile uint8_t sample_input_trig = 0;
 static volatile uint8_t process_input_trig  = 0;
 
-uint8_t             user_change = 0;
-uint8_t             selected_ch;
+struct view view_channel;
+struct view view_midi_channel;
+struct view view_midi_note;
+
 enum display_mode   disp_mode;
 uint8_t             disp_sent;
 uint8_t             disp_dbg = 0;
@@ -81,10 +88,11 @@ static void update_display (void);
 static void store_settings (void);
 static void load_settings (void);
 static void config_gpio (void);
-static void handle_ui_input (void);
+static uint8_t handle_ui_input (void);
 static void setup_buttons(void);
 static void update_inputs(void);
 static void setup_display (void);
+static void init_views (void);
 
 /* -------------------------------------------------------------------------- */
 
@@ -240,68 +248,21 @@ void process_midi (uint8_t byte) {
     update_display();
 }
 
-uint8_t note_map[] = { 'C', 'C', 'D', 'D', 'E', 'F', 'F', 'G', 'G', 'A', 'A', 'B' };
-
 void update_display (void) {
     static char text[] = "---";
-    struct cvchan *ch = &channels[selected_ch];
 
     switch (disp_mode) {
-        case disp_mode_channel: {
-            text[0] = 'C';
-            text[1] = 'H';
-            text[2] = selected_ch + 1 + 48;
-
-            segdisp_set_value(&disp, text, 3);
+        case disp_mode_channel:
+            view_update_display(&view_channel);
             break;
-        }
 
-        case disp_mode_midi: {
-            text[0] = ' ';
-
-            if (ch->midi_channel == 255) { // omni
-                text[0] = 'C';
-                text[1] = 'A';
-                text[2] = 'L';
-            } else {
-                uint8_t disp_channel = ch->midi_channel + 1;
-
-                text[1] = ((disp_channel / 10) % 10) + 48;
-                text[2] =  (disp_channel % 10) + 48;
-            }
-
-            segdisp_set_value(&disp, text, 3);
+        case disp_mode_midi:
+            view_update_display(&view_midi_channel);
             break;
-        }
 
-        case disp_mode_note: {
-            uint8_t note = ch->note % 12;
-            uint8_t oct = ch->note / 12;
-
-            text[0] = ' ';
-            text[1] = note_map[note];
-
-            if (ch->note == 255) { //omni
-                text[0] = 'N';
-                text[1] = 'A';
-                text[2] = 'L';
-            } else {
-                if (oct == 0) {
-                    text[0] = '-';
-                    text[2] = 1 + 48;
-                } else {
-                    text[2] = oct + 48 - 1;
-                }
-            }
-
-            segdisp_set_value(&disp, text, 3);
-
-            if (note > 0 && (text[1] == note_map[note-1])) {
-                segdisp_overlay_value(&disp, " . ", 3);
-            }
-
+        case disp_mode_note:
+            view_update_display(&view_midi_note);
             break;
-        }
 
         case disp_mode_debug: {
             text[0] = ((disp_dbg / 100) % 10) + 48;
@@ -316,9 +277,7 @@ void update_display (void) {
     if (disp_sent) segdisp_overlay_value(&disp, ".  ", 3);
 }
 
-void handle_ui_input (void) {
-    struct cvchan *ch = &channels[selected_ch];
-
+uint8_t handle_ui_input (void) {
     static size_t disp_mode_idx = 0;
     static enum display_mode mode_order[] = {
         disp_mode_channel,
@@ -328,74 +287,37 @@ void handle_ui_input (void) {
 
     if (buttons[0].high) {
         disp_mode = mode_order[(disp_mode_idx++) % 3];
-        return;
+        return 1;
     }
 
     switch (disp_mode) {
         case disp_mode_channel:
-            if (buttons[1].high) {
-                selected_ch = ((selected_ch - 1) + CHANNEL_COUNT) % CHANNEL_COUNT;
-                user_change = 1;
-                break;
-            }
-
-            if (buttons[2].high) {
-                selected_ch = (selected_ch + 1) % CHANNEL_COUNT;
-                user_change = 1;
-            }
-
-            break;
+            return view_update_input(&view_channel);
 
         case disp_mode_midi:
-            if (buttons[1].high) {
-                if (buttons[2].high) {
-                    ch->midi_channel = 255;
-                    break;
-                }
-
-                ch->midi_channel = ((ch->midi_channel - 1) + 16) % 16;
-                user_change = 1;
-                break;
-            }
-
-            if (buttons[2].high) {
-                ch->midi_channel = (ch->midi_channel + 1) % 16;
-                user_change = 1;
-            }
-
-            break;
+            return view_update_input(&view_midi_channel);
 
         case disp_mode_note:
-            if (buttons[1].high) {
-                if (buttons[2].high) {
-                    ch->note = 255;
-                    break;
-                }
-
-                ch->note = ((ch->note - 1) + 127) % 127;
-                user_change = 1;
-
-                break;
-            }
-
-            if (buttons[2].high) {
-                ch->note = (ch->note + 1) % 127;
-                user_change = 1;
-            }
-
-            break;
+            return view_update_input(&view_midi_note);
 
         case disp_mode_debug:
-        default:
-            if (buttons[0].high) disp_mode = disp_mode_channel;
+            if (buttons[0].high) {
+                disp_mode = mode_order[0];
+                return 1;
+            }
             if (buttons[1].high) {
                 disp_dbg--;
+                return 1;
             }
             if (buttons[2].high) {
                 disp_dbg++;
+                return 1;
             }
 
-            break;
+            return 0;
+
+        default:
+            return 0;
     }
 }
 
@@ -460,6 +382,19 @@ static void setup_display (void) {
     disp.latch_pin=PINC5;
 }
 
+static void init_views (void) {
+    static struct view_data vd;
+    vd.selected_ch = 0;
+    vd.disp = &disp;
+    vd.channels = channels;
+    vd.buttons = buttons;
+    vd.channel_count = CHANNEL_COUNT;
+
+    view_channel_init(&view_channel, &vd);
+    view_midi_channel_init(&view_midi_channel, &vd);
+    view_midi_note_init(&view_midi_note, &vd);
+}
+
 /* -------------------------------------------------------------------------- */
 
 int main (void) {
@@ -473,6 +408,8 @@ int main (void) {
     spi_init();
     sei();
 
+    init_views();
+
     // shutdown dacs until first used
     for (size_t i=0; i<DAC_COUNT; ++i) {
         MCP4802_disable_dac_spi(&dacs[i], 0, &spi_send_uint16_t);
@@ -483,9 +420,10 @@ int main (void) {
     setup_display();
 
     // initialise ui
-    selected_ch = 0;
     disp_mode = disp_mode_debug;
     update_display();
+
+    uint8_t user_change = 0;
 
     while (1) {
         sei(); // SREG:I does not always reset to 1. This should be investigated
@@ -527,7 +465,6 @@ int main (void) {
             process_input_trig = 0;
 
             if (!buttons[0].high && !buttons[1].high && !buttons[2].high) {
-                /* no change */
                 if (user_change && eeprom_is_ready()) {
                     store_settings();
                     user_change = 0;
@@ -536,7 +473,7 @@ int main (void) {
                 continue;
             }
 
-            handle_ui_input();
+            user_change = handle_ui_input();
             update_display();
         }
     }
